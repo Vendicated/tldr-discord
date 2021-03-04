@@ -1,7 +1,7 @@
 import fetch from "node-fetch";
 import fs from "fs/promises";
 import path from "path";
-import { DiscordInteractions, InteractionApplicationCommandCallbackData } from "slash-commands";
+import { DiscordInteractions, InteractionApplicationCommandCallbackData, ApplicationCommand as DiscordCommand } from "slash-commands";
 import { InteractionResponseType } from "discord-interactions";
 import { Response } from "express";
 
@@ -13,6 +13,7 @@ export class Client {
 	public readonly interactions = new DiscordInteractions(config);
 	public readonly commands = new Map<string, SlashCommand>();
 	public readonly isProduction = process.env.NODE_ENV === "production";
+	public _commands!: DiscordCommand[];
 
 	public constructor() {
 		this.initCommands();
@@ -27,7 +28,7 @@ export class Client {
 		for await (const filename of await fs.readdir(commandPath)) {
 			const file = await import(path.join(commandPath, filename));
 
-			const command: SlashCommand = new file.Command();
+			const command: SlashCommand = new file.Command(this);
 
 			if (this.isProduction) {
 				if (command.devOnly) continue;
@@ -41,6 +42,8 @@ export class Client {
 		}
 
 		console.info(`Registered ${this.commands.size} commands.`);
+
+		this._commands = await this.interactions.getApplicationCommands(this.isProduction ? undefined : guildId);
 	}
 
 	public async handleCommand(res: Response, body: ApplicationCommand) {

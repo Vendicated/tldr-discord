@@ -1,5 +1,6 @@
 import { PartialApplicationCommand, InteractionApplicationCommandCallbackData } from "slash-commands";
 import { ApplicationCommand } from "../types";
+import { Client } from "./Client";
 
 export abstract class SlashCommand {
 	public abstract name: PartialApplicationCommand["name"];
