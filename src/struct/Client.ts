@@ -1,7 +1,7 @@
 import fetch from "node-fetch";
 import fs from "fs/promises";
 import path from "path";
-import { DiscordInteractions } from "slash-commands";
+import { DiscordInteractions, InteractionApplicationCommandCallbackData } from "slash-commands";
 import { InteractionResponseType } from "discord-interactions";
 import { Response } from "express";
 
@@ -15,6 +15,10 @@ export class Client {
 
 	public constructor() {
 		this.initCommands();
+	}
+
+	public async end(res: Response, data: InteractionApplicationCommandCallbackData) {
+		res.status(200).end(JSON.stringify({ type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE, data }));
 	}
 
 	public async initCommands() {
@@ -32,30 +36,25 @@ export class Client {
 		console.info(`Registered ${this.commands.size} commands.`);
 	}
 
-	public async handleCommand({ send: respond }: Response, body: ApplicationCommand) {
+	public async handleCommand(res: Response, body: ApplicationCommand) {
 		const command = this.commands.get(body.data.name);
 
-		if (!command) return this.handleError(respond, `Command ${body.data.name} not found.`);
+		if (!command) return this.handleError(res, `Command ${body.data.name} not found.`);
 
 		await command
 			.callback(body)
-			.then(data => respond({ type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE, data }))
-			.catch(err => this.handleError(respond, err));
+			.then(data => this.end(res, data))
+			.catch(err => this.handleError(res, err));
 	}
 
-	public handleError(respond: Response["send"], error?: any) {
+	public handleError(res: Response, error?: any) {
 		if (!(error instanceof Error)) {
 			error = new Error(`${error || "Unknown Error"}`);
 		}
 
 		const content = "I'm sorry, an error occurred: " + `${error.message}`;
 
-		respond({
-			type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-			data: {
-				content
-			}
-		});
+		this.end(res, { content });
 	}
 
 	public logError(error: Error) {

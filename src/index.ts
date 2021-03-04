@@ -1,4 +1,4 @@
-import { verifyKeyMiddleware, InteractionType, InteractionResponseType } from "discord-interactions";
+import { verifyKeyMiddleware, InteractionType } from "discord-interactions";
 import Express from "express";
 import { discord, port } from "./config.json";
 import { Client } from "./struct/Client";
@@ -12,11 +12,7 @@ app.get("/", (_, res) => {
 });
 
 app.post("/interactions", verifyKeyMiddleware(discord.publicKey), ({ body }, res) => {
-	if (body.type === InteractionType.PING) {
-		res.send({
-			type: InteractionResponseType.PONG
-		});
-	} else if (body.type === InteractionType.APPLICATION_COMMAND) {
+	if (body.type === InteractionType.APPLICATION_COMMAND) {
 		client.handleCommand(res, body);
 	}
 });
