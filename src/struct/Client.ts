@@ -12,6 +12,7 @@ import { ApplicationCommand } from "../types";
 export class Client {
 	public readonly interactions = new DiscordInteractions(config);
 	public readonly commands = new Map<string, SlashCommand>();
+	public readonly isProduction = process.env.NODE_ENV === "production";
 
 	public constructor() {
 		this.initCommands();
@@ -28,9 +29,15 @@ export class Client {
 
 			const command: SlashCommand = new file.Command();
 
+			if (this.isProduction) {
+				if (command.devOnly) continue;
+			} else {
+				command.name += "-dev";
+			}
+
 			this.commands.set(command.name, command);
 
-			await this.interactions.createApplicationCommand(command, process.env.NODE_ENV === "production" ? undefined : guildId);
+			await this.interactions.createApplicationCommand(command, this.isProduction ? undefined : guildId);
 		}
 
 		console.info(`Registered ${this.commands.size} commands.`);
@@ -73,7 +80,7 @@ export class Client {
 					{
 						color: 0xff073a,
 						title: error.name,
-						description: "```js\n" + error.stack || error.message || "Unknown Error" + "\n```"
+						description: "```js\n" + (error.stack || error.message || "Unknown Error") + "\n```"
 					}
 				]
 			})
