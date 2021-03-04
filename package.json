@@ -1,0 +1,33 @@
+{
+	"name": "tldr-discord",
+	"version": "1.0.0",
+	"description": "",
+	"keywords": [],
+	"license": "AGPL-3.0",
+	"author": "Vendicated <vendicated@riseup.net>",
+	"main": "dist/index.js",
+	"scripts": {
+		"build": "tsc",
+		"start": "yarn build && node .",
+		"dev:watch": "yarn build --watch && nodemon",
+		"production": "export NODE_ENV=PRODUCTION && pm2 start --name tldr-discord yarn -- run start",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"dependencies": {
+		"discord-interactions": "^2.0.0",
+		"express": "^4.17.1",
+		"node-fetch": "^2.6.1",
+		"slash-commands": "^1.3.1"
+	},
+	"devDependencies": {
+		"@types/express": "^4.17.11",
+		"@types/node": "^14.14.31",
+		"@types/node-fetch": "^2.5.8",
+		"@typescript-eslint/eslint-plugin": "^4.16.1",
+		"@typescript-eslint/parser": "^4.16.1",
+		"eslint": "^7.21.0",
+		"eslint-config-prettier": "^8.1.0",
+		"nodemon": "^2.0.7",
+		"typescript": "^4.2.2"
+	}
+}
