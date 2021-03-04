@@ -2,7 +2,7 @@ import { ApplicationCommandOption, ApplicationCommandOptionType, InteractionAppl
 import { SlashCommand } from "../struct/SlashCommand";
 import { ApplicationCommand } from "../types";
 import { Client } from "../struct/Client";
-
+import { guildId } from "../config.json";
 export class Command extends SlashCommand {
 	private client: Client;
 
@@ -10,7 +10,7 @@ export class Command extends SlashCommand {
 	public description: string = "Delete an interaction";
 	public devonly = true;
 	public options: ApplicationCommandOption[] | undefined = [
-		{ name: "commandName", type: ApplicationCommandOptionType.STRING, description: "The command to delete" }
+		{ name: "commandname", type: ApplicationCommandOptionType.STRING, description: "The command to delete" }
 	];
 
 	public constructor(client: Client) {
@@ -21,13 +21,13 @@ export class Command extends SlashCommand {
 	public async callback(command: ApplicationCommand): Promise<InteractionApplicationCommandCallbackData> {
 		console.log(command);
 		try {
-			const name = command.data.options?.find(opt => opt.name === "commandName");
+			const name = command.data.options?.find(opt => opt.name === "commandname");
 
 			const result = await this.client._commands.find(cmd => (name as any)?.value);
 
 			if (!result) return { content: `Command \`${name}\` not found.` };
 
-			await this.client.interactions.deleteApplicationCommand(result.id);
+			await this.client.interactions.deleteApplicationCommand(result.id, guildId);
 
 			return { content: `Successfully deleted command \`${result.name}\`` };
 		} catch {
