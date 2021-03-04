@@ -12,7 +12,7 @@ import { ApplicationCommand } from "../types";
 export class Client {
 	public readonly interactions = new DiscordInteractions(config);
 	public readonly commands = new Map<string, SlashCommand>();
-	public readonly isProduction = process.env.NODE_ENV === "production";
+	public readonly isProduction = process.env.NODE_ENV === "PRODUCTION";
 	public _commands!: DiscordCommand[];
 
 	public constructor() {
