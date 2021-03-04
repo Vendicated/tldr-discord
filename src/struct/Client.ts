@@ -5,7 +5,7 @@ import { DiscordInteractions, InteractionApplicationCommandCallbackData } from "
 import { InteractionResponseType } from "discord-interactions";
 import { Response } from "express";
 
-import { discord as config, logWebhook } from "../config.json";
+import { discord as config, logWebhook, guildId } from "../config.json";
 import { SlashCommand } from "./SlashCommand";
 import { ApplicationCommand } from "../types";
 
@@ -30,7 +30,7 @@ export class Client {
 
 			this.commands.set(command.name, command);
 
-			await this.interactions.createApplicationCommand(command);
+			await this.interactions.createApplicationCommand(command, process.env.NODE_ENV === "production" ? undefined : guildId);
 		}
 
 		console.info(`Registered ${this.commands.size} commands.`);
