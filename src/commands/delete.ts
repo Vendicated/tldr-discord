@@ -23,7 +23,7 @@ export class Command extends SlashCommand {
 		try {
 			const name = command.data.options?.find(opt => opt.name === "commandname");
 
-			const result = await this.client._commands.find(cmd => (name as any)?.value);
+			const result = await this.client._commands.find(cmd => cmd.name === (name as any)?.value);
 
 			if (!result) return { content: `Command \`${name}\` not found.` };
 
