@@ -41,10 +41,12 @@ export class Client {
 
 		if (!command) return this.handleError(res, `Command ${body.data.name} not found.`);
 
-		await command
-			.callback(body)
-			.then(data => this.end(res, data))
-			.catch(err => this.handleError(res, err));
+		try {
+			const data = await command.callback(body);
+			this.end(res, data);
+		} catch (err) {
+			this.handleError(res, err);
+		}
 	}
 
 	public handleError(res: Response, error?: any) {
