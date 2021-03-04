@@ -13,7 +13,7 @@ export class Client {
 	public readonly interactions = new DiscordInteractions(config);
 	public readonly commands = new Map<string, SlashCommand>();
 	public readonly isProduction = process.env.NODE_ENV === "PRODUCTION";
-	public _commands!: DiscordCommand[];
+	private _commands!: DiscordCommand[];
 
 	public constructor() {
 		this.initCommands();
@@ -49,13 +49,30 @@ export class Client {
 	public async handleCommand(res: Response, body: ApplicationCommand) {
 		const command = this.commands.get(body.data.name);
 
-		if (!command) return this.handleError(res, `Command ${body.data.name} not found.`);
+		if (!command) {
+			if (body.data.name.endsWith("-dev")) {
+				// Somehow a development command was triggered in production
+				return res.status(200).end(JSON.stringify({ type: InteractionResponseType.ACKNOWLEDGE }));
+			} else {
+				return this.handleError(res, `Command ${body.data.name} not found.`);
+			}
+		}
 
 		try {
 			const data = await command.callback(body);
 			this.end(res, data);
 		} catch (err) {
 			this.handleError(res, err);
+		}
+	}
+
+	public async tryDelete(commandName: string, global: boolean) {
+		try {
+			const result = this._commands.find(cmd => cmd.name === commandName);
+			await this.interactions.deleteApplicationCommand(result?.name!, global === true ? undefined : guildId);
+			return { content: `Successfully deleted command ${commandName}` };
+		} catch {
+			return { content: `I was not able to delete command ${commandName}` };
 		}
 	}
 

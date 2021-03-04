@@ -11,4 +11,9 @@ export abstract class SlashCommand {
 	public abstract options: PartialApplicationCommand["options"];
 
 	public abstract callback(command: ApplicationCommand): Promise<InteractionApplicationCommandCallbackData>;
+
+	public getOption<T extends string | number | boolean>(command: ApplicationCommand, name: string): T {
+		const match: any = command.data.options?.find(opt => opt.name.toLowerCase() === name.toLowerCase());
+		return match.value as T;
+	}
 }
