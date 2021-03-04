@@ -19,6 +19,7 @@ export class Command extends SlashCommand {
 	}
 
 	public async callback(command: ApplicationCommand): Promise<InteractionApplicationCommandCallbackData> {
+		console.log(command);
 		try {
 			const name = command.data.options?.find(opt => opt.name === "commandName");
 
