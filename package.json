@@ -10,7 +10,7 @@
 		"build": "tsc",
 		"start": "yarn build && node .",
 		"dev:watch": "yarn build --watch && nodemon",
-		"production": "export NODE_ENV=PRODUCTION && pm2 start --name tldr-discord yarn -- run start",
+		"production": "export NODE_ENV=PRODUCTION && pm2 start --name tldr-discord node -- run start",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"dependencies": {
