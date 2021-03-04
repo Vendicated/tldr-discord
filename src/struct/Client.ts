@@ -54,6 +54,8 @@ export class Client {
 			error = new Error(`${error || "Unknown Error"}`);
 		}
 
+		this.logError(error);
+
 		const content = "I'm sorry, an error occurred: " + `${error.message}`;
 
 		this.end(res, { content });

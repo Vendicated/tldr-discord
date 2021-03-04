@@ -7,7 +7,7 @@ export class Command extends SlashCommand {
 	public description: string = "Test Slash Command Error";
 	public options: ApplicationCommandOption[] | undefined;
 
-	public callback(_command: ApplicationCommand): Promise<InteractionApplicationCommandCallbackData> {
+	public async callback(_command: ApplicationCommand): Promise<InteractionApplicationCommandCallbackData> {
 		throw new Error("Method not implemented.");
 	}
 }
