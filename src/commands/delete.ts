@@ -8,7 +8,7 @@ export class Command extends SlashCommand {
 
 	public name: string = "delete";
 	public description: string = "Delete an interaction";
-	public devonly = true;
+	public devOnly = true;
 	public options: ApplicationCommandOption[] | undefined = [
 		{ name: "commandname", type: ApplicationCommandOptionType.STRING, description: "The command to delete" }
 	];

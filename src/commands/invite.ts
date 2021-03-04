@@ -6,6 +6,8 @@ import { discord } from "../config.json";
 export class Command extends SlashCommand {
 	public name: string = "invite";
 	public description: string = "Get my invite link";
+	public devOnly: boolean = false;
+
 	public options: ApplicationCommandOption[] | undefined;
 
 	public async callback(_command: ApplicationCommand): Promise<InteractionApplicationCommandCallbackData> {
